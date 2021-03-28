@@ -1,6 +1,6 @@
 const router = require('express').Router();
 //const Film = require('../models/film');
-const {Film, validate_film /*,validate_film_update*/} = require('../models/film');
+const {Film, validate_film ,validate_film_update} = require('../models/film');
 const _ = require('lodash');
 const Seance = require('../models/seance');
 
@@ -33,7 +33,30 @@ router.post('' ,async  (req ,res)=> {
      .then(film => res.status(201).send(film) )  
      .catch(error => res.status(400).json({error}))  ; 
     }) ; 
-
-
+    router.put('/:id', async (req,res)=>{
+        let validation = validate_film_update(req.body) ; 
+        if(validation.error )
+             return res.status(400).send(validation.error.details[0].message ) ;
+        let film =await Film.updateOne({_id:req.params.id} , { ...req.body})
+        if(!film)
+            return res.status(404).send("Id n'est past trouvable")
+        film = await Film.findById(req.params.id);
+        res.send(film) ; 
+    }) ;
+    
+    router.delete('/:id', async (req,res)=>{
+        let film =await Film.findById(req.params.id);
+        if(!film)
+            return res.status(404).send("Id n'est past trouvable")
+        await Film.deleteOne({_id:req.params.id})
+        res.send(film);
+    });
+    router.put('/reservation', async (req,res)=>{
+        let film =await Film.findById(req.params.id);
+        if(!film)
+            return res.status(404).send("Id n'est past trouvable")
+        await Film.deleteOne({_id:req.params.id})
+        res.send(film);
+    });
 
 module.exports = router;

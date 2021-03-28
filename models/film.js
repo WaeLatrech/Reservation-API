@@ -39,8 +39,17 @@ const film_validation_schema = {
 function validate_film(body){
     return Joi.validate(body, film_validation_schema);
 }
+const update_film_validation_schema = {
+    name : Joi.string().min(5).max(50) ,  
+    actors : Joi.array().min(3).items(Joi.string().min(5)),
+    seance :Joi.array().items({_id : Joi.ObjectId() , date: Joi.date() , time : Joi.string() ,nbplaces : Joi.number()}), 
+}
 
+function validate_film_update (body) { 
+    return Joi.validate(body , update_film_validation_schema) ; 
+}
 const Film = mongoose.model('Film',filmSchema);
 module.exports.Film = Film;
 module.exports.validate_film = validate_film;   
+module.exports.validate_film_update = validate_film_update ; 
 
